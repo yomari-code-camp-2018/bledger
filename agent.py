@@ -27,7 +27,6 @@ class Block:
         return sha.hexdigest()
        
     def sign():
-        verified = gpg.verify_data("sign", msg.encode())
         pass
 
 def create_genesis_block():
