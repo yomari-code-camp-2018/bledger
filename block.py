@@ -11,11 +11,12 @@ gpg_home = os.path.join(Path.home(), 'gpgtests')
 
 class Block:
     def __init__(self, index, timestamp, frm, to, previous_hash):
-        
         self.index = index
+        self.frm = frm
+        self.to = to
         self.timestamp = timestamp
         self.previous_hash = previous_hash
-        self.hash = self.hash_block()
+        self.signs = []
         pass
     
     def hash_block(self):
@@ -43,7 +44,9 @@ class BlockChain:
     def new_transaction(self, frm, to, amount, comment):        
         block = Block(self.index+1, date.datetime.now(), frm, to, self.blocks[self.index].hash)
         
-    def add_block():
+    def add_block(block):
+        block.index = len(self.blocks ) + 1
+        block.hash = block.hash_block()
         pass
     
         
@@ -64,10 +67,6 @@ class BlockChain:
     
     def export_key():
         pass
-        
-    def get_key(self, email):
-        pass
-        
         
     def generate_key(self, email, pas):
         input_data =  gpg.gen_key_input(
@@ -92,7 +91,7 @@ def delete_keys():
     gpg.delete_keys(fp)
 
 chain = BlockChain()
-gpg = gpg.GPG( homedir = gpg_home)
+gpg = gpg.GPG( gnupghome = gpg_home)
 gpg.encoding = 'utf-8'
 
 keys = gpg.list_keys()
@@ -105,7 +104,13 @@ if len(keys) == 0:
     email = input("Email : ")  
     key = chain.generate_key(email, "")
     
-email = input("Email : ")
-    
-print("Using email " + email)
+msg = "Ram -> Shyam 900"
+sign = gpg.sign(msg, detach = True, clearsign = False)
 
+msg = msg
+verified = gpg.verify_data("sign", msg.encode())
+print(sign)
+
+print(verified.username)
+
+if not verified: raise ValueError("Signature could not be verified!")
